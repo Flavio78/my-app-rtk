@@ -1,14 +1,14 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Post } from "../components/Post";
-import { fetchPosts, postsSelector } from "../slices/postsSlice";
+import { getPosts, postsSelector } from "../slices/postsSlice";
 
 const PostsPage = () => {
   const dispatch = useDispatch();
   const { posts, loading, hasErrors } = useSelector(postsSelector);
 
   useEffect(() => {
-    dispatch(fetchPosts());
+    dispatch(getPosts());
     return () => {
       // cleanup
     };

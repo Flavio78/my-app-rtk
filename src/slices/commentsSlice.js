@@ -1,5 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { requestPosts } from "./postsSlice";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 const initialCommentsState = {
   loading: false,
@@ -7,45 +6,38 @@ const initialCommentsState = {
   comments: [],
 };
 
+export const getComments = createAsyncThunk(
+  "comments/getComments",
+  (postId) => {
+    return fetch(
+      `https://jsonplaceholder.typicode.com/comments?postId=${postId}`
+    )
+      .then((response) => {
+        if (!response.ok) throw Error(response.statusText);
+        return response.json();
+      })
+      .then((json) => json);
+  }
+);
+
 const commentsSlice = createSlice({
   name: "comments",
   initialState: initialCommentsState,
-  reducers: {
-    requestComment: (state) => {
+  reducers: {},
+  extraReducers: {
+    [getComments.pending]: (state) => {
       state.loading = true;
-      state.hasErrors = false;
     },
-    getCommentsSuccess: (state, { payload }) => {
-      state.loading = false;
-      state.hasErrors = false;
-      state.comments = payload;
-    },
-    getCommentsFailure: (state) => {
+    [getComments.rejected]: (state, { error }) => {
       state.loading = false;
       state.hasErrors = true;
+    },
+    [getComments.fulfilled]: (state, { payload }) => {
+      state.loading = false;
+      state.comments = payload;
     },
   },
 });
 
-export const {
-  requestComment,
-  getCommentsFailure,
-  getCommentsSuccess,
-} = commentsSlice.actions;
-export default commentsSlice.reducer;
+export const commentsReducer = commentsSlice.reducer;
 export const commentsSelector = (state) => state.comments;
-
-export const fetchComments = (postId) => {
-  return async (dispatch) => {
-    dispatch(requestPosts());
-    try {
-      const response = await fetch(
-        `https://jsonplaceholder.typicode.com/comments?postId=${postId}`
-      );
-      const data = await response.json();
-      dispatch(getCommentsSuccess(data));
-    } catch (error) {
-      dispatch(getCommentsFailure());
-    }
-  };
-};

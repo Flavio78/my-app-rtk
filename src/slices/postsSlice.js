@@ -1,4 +1,13 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+
+export const getPosts = createAsyncThunk("posts/getPosts", () => {
+  return fetch("https://jsonplaceholder.typicode.com/posts")
+    .then((response) => {
+      if (!response.ok) throw Error(response.statusText);
+      return response.json();
+    })
+    .then((json) => json);
+});
 
 const postsInitialState = {
   loading: false,
@@ -9,41 +18,21 @@ const postsInitialState = {
 const postsSlice = createSlice({
   name: "posts",
   initialState: postsInitialState,
-  reducers: {
-    requestPosts: (state) => {
+  reducers: {},
+  extraReducers: {
+    [getPosts.pending]: (state) => {
       state.loading = true;
     },
-    getPostsSuccess: (state, { payload }) => {
-      state.posts = payload;
-      state.loading = false;
-      state.hasErrors = false;
-    },
-    getPostsFailure: (state) => {
-      state.loading = false;
+    [getPosts.rejected]: (state, { error }) => {
       state.hasErrors = true;
+      state.loading = false;
+    },
+    [getPosts.fulfilled]: (state, { payload }) => {
+      state.loading = false;
+      state.posts = payload;
     },
   },
 });
 
-export const fetchPosts = () => {
-  return async (dispatch) => {
-    dispatch(requestPosts());
-    try {
-      const response = await fetch(
-        "https://jsonplaceholder.typicode.com/posts"
-      );
-      const data = await response.json();
-      dispatch(getPostsSuccess(data));
-    } catch (error) {
-      dispatch(getPostsFailure());
-    }
-  };
-};
-
-export const {
-  requestPosts,
-  getPostsSuccess,
-  getPostsFailure,
-} = postsSlice.actions;
 export const postsSelector = (state) => state.posts;
-export default postsSlice.reducer;
+export const postsReducer = postsSlice.reducer;

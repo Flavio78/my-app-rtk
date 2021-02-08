@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchPost, postSelector } from "../slices/postSlice";
-import { commentsSelector, fetchComments } from "../slices/commentsSlice";
+import { getPost, postSelector } from "../slices/postSlice";
+import { commentsSelector, getComments } from "../slices/commentsSlice";
 import { Post } from "../components/Post";
 import Comment from "../components/Comment";
 
@@ -19,8 +19,8 @@ const SinglePostPage = ({ match }) => {
 
   useEffect(() => {
     const { id } = match.params;
-    dispatch(fetchComments(id));
-    dispatch(fetchPost(id));
+    dispatch(getComments(id));
+    dispatch(getPost(id));
   }, [dispatch, match.params]);
 
   const renderPost = () => {

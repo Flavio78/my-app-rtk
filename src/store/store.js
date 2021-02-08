@@ -4,18 +4,18 @@ import logger from "redux-logger";
 import counterReducer from "../slices/counterSlice";
 import authReducer from "../slices/authSlice";
 import usersReducers from "../slices/usersSlice";
-import postsReducers from "../slices/postsSlice";
-import postReducers from "../slices/postSlice";
-import commentsReducers from "../slices/commentsSlice";
+import { postsReducer } from "../slices/postsSlice";
+import { postReducer } from "../slices/postSlice";
+import { commentsReducer } from "../slices/commentsSlice";
 
 export default configureStore({
   reducer: {
     counter: counterReducer,
     auth: authReducer,
     users: usersReducers,
-    posts: postsReducers,
-    post: postReducers,
-    comments: commentsReducers,
+    posts: postsReducer,
+    post: postReducer,
+    comments: commentsReducer,
   },
   devTools: true,
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
