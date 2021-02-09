@@ -1,17 +1,18 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
-const initialCommentsState = {
+const SLICENAME = "comments";
+const ENDPOINT = "https://jsonplaceholder.typicode.com/comments?postId=";
+
+const initialState = {
   loading: false,
   hasErrors: false,
   comments: [],
 };
 
 export const getComments = createAsyncThunk(
-  "comments/getComments",
+  `${SLICENAME}/getComments`,
   (postId) => {
-    return fetch(
-      `https://jsonplaceholder.typicode.com/comments?postId=${postId}`
-    )
+    return fetch(`${ENDPOINT}${postId}`)
       .then((response) => {
         if (!response.ok) throw Error(response.statusText);
         return response.json();
@@ -21,8 +22,8 @@ export const getComments = createAsyncThunk(
 );
 
 const commentsSlice = createSlice({
-  name: "comments",
-  initialState: initialCommentsState,
+  name: SLICENAME,
+  initialState,
   reducers: {},
   extraReducers: {
     [getComments.pending]: (state) => {
