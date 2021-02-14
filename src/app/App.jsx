@@ -10,6 +10,7 @@ import DashboardPage from "../pages/DashboardPage";
 import NotFoundPage from "../pages/NotFound";
 import PostsPage from "../pages/PostsPage";
 import SinglePostPage from "../pages/SinglePostPage";
+import TodosPage from "../pages/TodosPage";
 
 const App = () => {
   return (
@@ -19,6 +20,7 @@ const App = () => {
         <Route exact path="/" component={DashboardPage} />
         <Route exact path="/posts" component={PostsPage} />
         <Route exact path="/posts/:id" component={SinglePostPage} />
+        <Route exact path="/todos" component={TodosPage} />
         <Route exact path="/notfound" component={NotFoundPage} />
         <Redirect to="/notfound" />
       </Switch>
