@@ -1,12 +1,12 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Navbar, Nav } from "react-bootstrap";
 
-export const Navbar = () => (
-  <nav>
-    <section>
-      <Link to="/">Dashboard</Link>
-      <Link to="/posts">Posts</Link>
-      <Link to="/todos">Todos</Link>
-    </section>
-  </nav>
+export const Header = () => (
+  <Navbar bg="primary" variant="dark">
+    <Navbar.Brand href="/">Dashboard</Navbar.Brand>
+    <Nav className="mr-auto">
+      <Nav.Link href="/posts">Posts</Nav.Link>
+      <Nav.Link href="/todos">Todos</Nav.Link>
+    </Nav>
+  </Navbar>
 );

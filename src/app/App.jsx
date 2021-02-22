@@ -5,12 +5,14 @@ import {
   BrowserRouter as Router,
   Switch,
 } from "react-router-dom";
-import { Navbar } from "../components/Navbar";
+import { Header as Navbar } from "../components/Navbar";
 import DashboardPage from "../pages/DashboardPage";
 import NotFoundPage from "../pages/NotFound";
 import PostsPage from "../pages/PostsPage";
 import SinglePostPage from "../pages/SinglePostPage";
 import TodosPage from "../pages/TodosPage";
+
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const App = () => {
   return (

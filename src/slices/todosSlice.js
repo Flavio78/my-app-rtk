@@ -1,12 +1,36 @@
-import { createSlice, createEntityAdapter, nanoid } from "@reduxjs/toolkit";
+import {
+  createSlice,
+  createEntityAdapter,
+  nanoid,
+  createAsyncThunk,
+} from "@reduxjs/toolkit";
 
-export const todoAdapter = createEntityAdapter();
+const SLICENAME = "todos";
+const ENDPOINT = "http://localhost:3001/todos";
+
+export const todoAdapter = createEntityAdapter({
+  selectId: (todo) => todo.id,
+});
 export const todoSelectors = todoAdapter.getSelectors((state) => state.todos);
+
+export const fetchTodos = createAsyncThunk(
+  `${SLICENAME}/fetchTodos`,
+  async () => {
+    return fetch(ENDPOINT)
+      .then((response) => {
+        if (!response.ok) throw Error(response.statusText);
+        return response.json();
+      })
+      .then((json) => json);
+  }
+);
 
 const todoSlice = createSlice({
   name: "todos",
   initialState: todoAdapter.getInitialState({
     deletedTodos: [],
+    loading: false,
+    hasError: false,
   }),
   reducers: {
     addTodo: (state, action) => {
@@ -16,6 +40,20 @@ const todoSlice = createSlice({
         completed: false,
       };
       todoAdapter.addOne(state, todoItem);
+    },
+  },
+  extraReducers: {
+    [fetchTodos.pending](state) {
+      state.loading = true;
+    },
+    [fetchTodos.rejected](state, { error }) {
+      state.loading = false;
+      state.hasError = true;
+    },
+    [fetchTodos.fulfilled](state, { payload }) {
+      state.loading = false;
+      state.hasError = false;
+      todoAdapter.setAll(state, payload);
     },
   },
 });
