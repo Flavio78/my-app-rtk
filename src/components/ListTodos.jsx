@@ -1,13 +1,12 @@
 import React from "react";
 import { Col, ListGroup, ListGroupItem, Row, Button } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
-import { deleteTodo, todoSelectors, fetchTodos } from "../slices/todosSlice";
+import { deleteTodo, todoSelectors } from "../slices/todosSlice";
 
 const ListTodos = () => {
   const allTodos = useSelector(todoSelectors.selectAll);
   const onClickDelete = (id) => {
     dispatch(deleteTodo(id));
-    dispatch(fetchTodos());
   };
   const dispatch = useDispatch();
   const todos = allTodos.map((todoItem) => (

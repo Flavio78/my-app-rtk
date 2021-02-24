@@ -45,12 +45,10 @@ export const deleteTodo = createAsyncThunk(
   async (id) => {
     await fetch(`${ENDPOINT}/${id}`, {
       method: "DELETE",
-    })
-      .then((response) => {
-        if (!response.ok) throw Error(response.statusText);
-        return id;
-      })
-      .then((id) => id);
+    }).then((response) => {
+      if (!response.ok) throw Error(response.statusText);
+    });
+    return id;
   }
 );
 
@@ -60,6 +58,8 @@ const todoSlice = createSlice({
     deletedTodos: [],
     loading: false,
     hasError: false,
+    status: "idle" | "loading" | "succeeded" | "failed",
+    error: "string" | null,
   }),
   reducers: {
     addTodo: (state, action) => {
@@ -75,10 +75,13 @@ const todoSlice = createSlice({
   extraReducers: {
     [fetchTodos.pending](state) {
       state.loading = true;
+      state.status = "loading";
     },
     [fetchTodos.rejected](state, { error }) {
       state.loading = false;
       state.hasError = true;
+      state.status = "failed";
+      state.error = error;
     },
     [fetchTodos.fulfilled](state, { payload }) {
       state.loading = false;
@@ -91,6 +94,7 @@ const todoSlice = createSlice({
     [deleteTodo.fulfilled]: (state, { payload: id }) => {
       state.loading = false;
       state.hasError = false;
+      console.log("id", id);
       todoAdapter.removeOne(state, id);
     },
   },
