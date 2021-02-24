@@ -25,6 +25,35 @@ export const fetchTodos = createAsyncThunk(
   }
 );
 
+export const addNewTodo = createAsyncThunk(
+  `${SLICENAME}/addTodo`,
+  async (newTodo) => {
+    await fetch(`${ENDPOINT}`, {
+      method: "POST",
+      body: JSON.stringify(newTodo),
+    })
+      .then((response) => {
+        if (!response.ok) throw Error(response.statusText);
+        return newTodo;
+      })
+      .then((newTodo) => newTodo);
+  }
+);
+
+export const deleteTodo = createAsyncThunk(
+  `${SLICENAME}/deleteTodo`,
+  async (id) => {
+    await fetch(`${ENDPOINT}/${id}`, {
+      method: "DELETE",
+    })
+      .then((response) => {
+        if (!response.ok) throw Error(response.statusText);
+        return id;
+      })
+      .then((id) => id);
+  }
+);
+
 const todoSlice = createSlice({
   name: "todos",
   initialState: todoAdapter.getInitialState({
@@ -40,6 +69,7 @@ const todoSlice = createSlice({
         completed: false,
       };
       todoAdapter.addOne(state, todoItem);
+      addNewTodo(todoItem);
     },
   },
   extraReducers: {
@@ -54,6 +84,14 @@ const todoSlice = createSlice({
       state.loading = false;
       state.hasError = false;
       todoAdapter.setAll(state, payload);
+    },
+    [deleteTodo.pending]: (state) => {
+      state.loading = true;
+    },
+    [deleteTodo.fulfilled]: (state, { payload: id }) => {
+      state.loading = false;
+      state.hasError = false;
+      todoAdapter.removeOne(state, id);
     },
   },
 });

@@ -10,7 +10,9 @@ const TodosPage = () => {
   const onChangeInput = (e) => {
     setText(e.target.value);
   };
-
+  const onClickLoad = () => {
+    dispatch(fetchTodos());
+  };
   useEffect(() => {
     dispatch(fetchTodos());
     return () => {
@@ -24,6 +26,9 @@ const TodosPage = () => {
   return (
     <Container fluid>
       <h1>Todos</h1>
+      <Button variant="info" onClick={onClickLoad}>
+        Load all Todos
+      </Button>
       <div>
         <InputGroup>
           <FormControl
