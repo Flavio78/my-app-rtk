@@ -1,8 +1,8 @@
 import {
   createSlice,
   createEntityAdapter,
-  nanoid,
   createAsyncThunk,
+  nanoid,
 } from "@reduxjs/toolkit";
 
 const SLICENAME = "todos";
@@ -25,19 +25,14 @@ export const fetchTodos = createAsyncThunk(
   }
 );
 
-export const addNewTodo = createAsyncThunk(
-  `${SLICENAME}/addTodo`,
-  async (newTodo) => {
-    await fetch(`${ENDPOINT}`, {
-      method: "POST",
-      body: JSON.stringify(newTodo),
-    })
-      .then((response) => {
-        if (!response.ok) throw Error(response.statusText);
-        return newTodo;
-      })
-      .then((newTodo) => newTodo);
-  }
+export const addTodo = createAsyncThunk(`${SLICENAME}/addTodo`, (newTodo) =>
+  fetch(ENDPOINT, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(newTodo),
+  })
 );
 
 export const deleteTodo = createAsyncThunk(
@@ -53,7 +48,7 @@ export const deleteTodo = createAsyncThunk(
 );
 
 const todoSlice = createSlice({
-  name: "todos",
+  name: { SLICENAME },
   initialState: todoAdapter.getInitialState({
     deletedTodos: [],
     loading: false,
@@ -61,17 +56,7 @@ const todoSlice = createSlice({
     status: "idle" | "loading" | "succeeded" | "failed",
     error: "string" | null,
   }),
-  reducers: {
-    addTodo: (state, action) => {
-      const todoItem = {
-        id: nanoid(),
-        todo: action.payload,
-        completed: false,
-      };
-      todoAdapter.addOne(state, todoItem);
-      addNewTodo(todoItem);
-    },
-  },
+  reducers: {},
   extraReducers: {
     [fetchTodos.pending](state) {
       state.loading = true;
@@ -94,12 +79,20 @@ const todoSlice = createSlice({
     [deleteTodo.fulfilled]: (state, { payload: id }) => {
       state.loading = false;
       state.hasError = false;
-      console.log("id", id);
       todoAdapter.removeOne(state, id);
     },
+    [addTodo.pending](state) {
+      state.loading = true;
+      state.status = "loading";
+    },
+    [addTodo.rejected](state, { error }) {
+      state.loading = false;
+      state.hasError = true;
+      state.status = "failed";
+      state.error = error;
+    },
+    [addTodo.fulfilled]: todoAdapter.upsertOne,
   },
 });
-
-export const { addTodo } = todoSlice.actions;
 
 export default todoSlice.reducer;
