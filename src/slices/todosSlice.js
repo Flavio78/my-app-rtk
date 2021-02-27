@@ -96,8 +96,14 @@ const todoSlice = createSlice({
       state.status = "failed";
       state.error = error;
     },
-    [addTodo.fulfilled]: todoAdapter.addOne,
+    [addTodo.fulfilled]: (state, { payload }) => {
+      state.loading = false;
+      state.hasError = false;
+      state.status = "succeeded";
+      state.error = "";
+      console.log("payload", payload);
+      todoAdapter.addOne(state, payload);
+    },
   },
 });
-
 export default todoSlice.reducer;
