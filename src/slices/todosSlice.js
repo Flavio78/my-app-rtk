@@ -3,7 +3,7 @@ import {
   createEntityAdapter,
   createAsyncThunk,
 } from "@reduxjs/toolkit";
-
+import { client } from "../api/client";
 const SLICENAME = "todos";
 const ENDPOINT = "http://localhost:3001/todos";
 
@@ -24,52 +24,15 @@ export const fetchTodos = createAsyncThunk(
   }
 );
 
-// client.post = function (endpoint, body, customConfig = {}) {
-//   const headers = { 'Content-Type': 'application/json' }
-
-//   const config = {
-//     method: 'POST',
-//     ...customConfig,
-//     headers: {
-//       ...headers,
-//       ...customConfig.headers,
-//     },
-//   }
-
-//   if (body) {
-//     config.body = JSON.stringify(body)
-//   }
-
-//   let data
-//   try {
-//     const response = await window.fetch(endpoint, config)
-//     data = await response.json()
-//     if (response.ok) {
-//       return data
-//     }
-//     throw new Error(response.statusText)
-//   } catch (err) {
-//     return Promise.reject(err.message ? err.message : data)
-//   }
-// }
-// }
-
 export const addTodo = createAsyncThunk(
   `${SLICENAME}/addTodo`,
-  async (todo) => {
-    console.log("JSON.stringify(todo)", JSON.stringify(todo));
-    await fetch(`${ENDPOINT}`, {
-      method: "POST",
-      header: { "Content-Type": "application/json" },
-      body: JSON.stringify(todo),
-    }).then((response) => {
-      if (!response.ok) {
-        console.log("response.statusText", response.statusText);
-        throw Error(response.statusText);
-      }
-      console.log("response.json()", response.json());
-      return response.json();
+  async (initialPost) => {
+    console.log("initialPost", initialPost);
+    const response = await client.post(`${ENDPOINT}`, {
+      todo: initialPost,
     });
+    console.log("response", response);
+    return response;
   }
 );
 
@@ -129,7 +92,7 @@ const todoSlice = createSlice({
       state.status = "failed";
       state.error = error;
     },
-    [addTodo.fulfilled]: todoAdapter.upsertOne,
+    [addTodo.fulfilled]: todoAdapter.addOne,
   },
 });
 
