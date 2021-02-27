@@ -2,7 +2,6 @@ import {
   createSlice,
   createEntityAdapter,
   createAsyncThunk,
-  nanoid,
 } from "@reduxjs/toolkit";
 
 const SLICENAME = "todos";
@@ -25,14 +24,53 @@ export const fetchTodos = createAsyncThunk(
   }
 );
 
-export const addTodo = createAsyncThunk(`${SLICENAME}/addTodo`, (newTodo) =>
-  fetch(ENDPOINT, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(newTodo),
-  })
+// client.post = function (endpoint, body, customConfig = {}) {
+//   const headers = { 'Content-Type': 'application/json' }
+
+//   const config = {
+//     method: 'POST',
+//     ...customConfig,
+//     headers: {
+//       ...headers,
+//       ...customConfig.headers,
+//     },
+//   }
+
+//   if (body) {
+//     config.body = JSON.stringify(body)
+//   }
+
+//   let data
+//   try {
+//     const response = await window.fetch(endpoint, config)
+//     data = await response.json()
+//     if (response.ok) {
+//       return data
+//     }
+//     throw new Error(response.statusText)
+//   } catch (err) {
+//     return Promise.reject(err.message ? err.message : data)
+//   }
+// }
+// }
+
+export const addTodo = createAsyncThunk(
+  `${SLICENAME}/addTodo`,
+  async (todo) => {
+    console.log("JSON.stringify(todo)", JSON.stringify(todo));
+    await fetch(`${ENDPOINT}`, {
+      method: "POST",
+      header: { "Content-Type": "application/json" },
+      body: JSON.stringify(todo),
+    }).then((response) => {
+      if (!response.ok) {
+        console.log("response.statusText", response.statusText);
+        throw Error(response.statusText);
+      }
+      console.log("response.json()", response.json());
+      return response.json();
+    });
+  }
 );
 
 export const deleteTodo = createAsyncThunk(
