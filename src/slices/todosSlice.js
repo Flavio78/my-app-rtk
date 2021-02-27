@@ -25,17 +25,21 @@ export const fetchTodos = createAsyncThunk(
 
 export const addTodo = createAsyncThunk(
   `${SLICENAME}/addTodo`,
-  async (todoNew) => {
-    const response = await fetch(`${ENDPOINT}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ todo: todoNew }),
-    });
-    let data = await response.json();
-    if (response.ok) {
-      return data;
-    } else {
-      throw new Error(response.statusText);
+  async (todoNew, thunkAPI) => {
+    try {
+      const response = await fetch(`${ENDPOINT}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ todo: todoNew }),
+      });
+      let data = await response.json();
+      if (response.ok) {
+        return data;
+      } else {
+        return thunkAPI.rejectWithValue(data);
+      }
+    } catch (e) {
+      return thunkAPI.rejectWithValue(e.response.data);
     }
   }
 );
