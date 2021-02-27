@@ -3,7 +3,6 @@ import {
   createEntityAdapter,
   createAsyncThunk,
 } from "@reduxjs/toolkit";
-import { client } from "../api/client";
 const SLICENAME = "todos";
 const ENDPOINT = "http://localhost:3001/todos";
 
@@ -26,13 +25,18 @@ export const fetchTodos = createAsyncThunk(
 
 export const addTodo = createAsyncThunk(
   `${SLICENAME}/addTodo`,
-  async (initialPost) => {
-    console.log("initialPost", initialPost);
-    const response = await client.post(`${ENDPOINT}`, {
-      todo: initialPost,
+  async (todoNew) => {
+    const response = await fetch(`${ENDPOINT}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ todo: todoNew }),
     });
-    console.log("response", response);
-    return response;
+    let data = await response.json();
+    if (response.ok) {
+      return data;
+    } else {
+      throw new Error(response.statusText);
+    }
   }
 );
 
