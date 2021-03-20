@@ -1,7 +1,21 @@
 import React from "react";
-import { Col, ListGroup, ListGroupItem, Row, Button } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { deleteTodo, todoSelectors } from "../slices/todosSlice";
+import {
+  Button,
+  Switch,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+  ListItemSecondaryAction,
+} from "@material-ui/core";
+import {
+  AccessAlarm,
+  ThreeDRotation,
+  Delete,
+  Assignment,
+} from "@material-ui/icons";
 
 const ListTodos = () => {
   const allTodos = useSelector(todoSelectors.selectAll);
@@ -10,18 +24,25 @@ const ListTodos = () => {
   };
   const dispatch = useDispatch();
   const todos = allTodos.map((todoItem) => (
-    <ListGroupItem key={todoItem.id}>
-      <Row>
-        <Col>{todoItem.todo}</Col>
-        <Col>
-          <Button variant="danger" onClick={() => onClickDelete(todoItem.id)}>
-            delete todo
-          </Button>
-        </Col>
-      </Row>
-    </ListGroupItem>
+    <ListItem key={todoItem.id}>
+      <ListItemIcon>
+        <Assignment />
+      </ListItemIcon>
+      <ListItemText primary={todoItem.todo} />
+      <Button
+        variant="contained"
+        color="secondary"
+        startIcon={<Delete />}
+        onClick={() => onClickDelete(todoItem.id)}
+      >
+        delete
+      </Button>
+      <ListItemSecondaryAction>
+        <Switch edge="end" checked="true" />
+      </ListItemSecondaryAction>
+    </ListItem>
   ));
-  return <ListGroup variant="flush">{todos}</ListGroup>;
+  return <List variant="flush">{todos}</List>;
 };
 
 export default ListTodos;
