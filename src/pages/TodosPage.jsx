@@ -2,11 +2,19 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import ListTodos from "../components/ListTodos";
 import { addTodo, fetchTodos } from "../slices/todosSlice";
-import { Button, InputGroup, FormControl, Container } from "react-bootstrap";
+import { Button, makeStyles, TextField } from "@material-ui/core";
+const useStyles = makeStyles((theme) => ({
+  root: {
+    "& .MuiTextField-root": {
+      margin: theme.spacing(1),
+      width: "25ch",
+    },
+  },
+}));
 
 const TodosPage = () => {
   const dispatch = useDispatch();
-  const [text, setText] = useState("");
+  const [text, setText] = useState("New todo");
   const onChangeInput = (e) => {
     setText(e.target.value);
   };
@@ -23,30 +31,24 @@ const TodosPage = () => {
   const submit = () => {
     dispatch(addTodo(text));
   };
+  const classes = useStyles();
   return (
-    <Container fluid>
+    <div className={classes.root}>
       <h1>Todos</h1>
-      <Button variant="info" onClick={onClickLoad}>
+      <Button variant="contained" color="primary" onClick={onClickLoad}>
         Load all Todos
       </Button>
-      <div>
-        <InputGroup>
-          <FormControl
-            placeholder="add an action to do"
-            aria-label="add an action to do"
-            aria-describedby="basic-addon2"
-            value={text}
-            onChange={onChangeInput}
-          />
-          <InputGroup.Append>
-            <Button variant="outline-secondary" onClick={submit}>
-              Add todo
-            </Button>
-          </InputGroup.Append>
-        </InputGroup>
-      </div>
-      <ListTodos></ListTodos>
-    </Container>
+      <TextField
+        required
+        defaultValue="New todo"
+        value={text}
+        onChange={onChangeInput}
+      />
+      <Button variant="contained" color="default" onClick={submit}>
+        Add new todo
+      </Button>
+      <ListTodos />
+    </div>
   );
 };
 

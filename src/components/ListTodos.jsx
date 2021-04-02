@@ -10,12 +10,7 @@ import {
   ListItemIcon,
   ListItemSecondaryAction,
 } from "@material-ui/core";
-import {
-  AccessAlarm,
-  ThreeDRotation,
-  Delete,
-  Assignment,
-} from "@material-ui/icons";
+import { Delete, Assignment } from "@material-ui/icons";
 
 const ListTodos = () => {
   const allTodos = useSelector(todoSelectors.selectAll);
